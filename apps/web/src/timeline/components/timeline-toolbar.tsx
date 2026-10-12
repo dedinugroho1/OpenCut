@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useEditor } from "@/editor/use-editor";
 import { useElementSelection } from "@/timeline/hooks/element/use-element-selection";
 import {
@@ -43,12 +44,14 @@ import {
 	Layers01Icon,
 	Chart03Icon,
 	Unlink02Icon,
+	AudioWave01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { OcRippleIcon } from "@/components/icons";
 import { GraphEditorPopover } from "./graph-editor/popover";
 import { PopoverTrigger } from "@/components/ui/popover";
 import { useGraphEditorController } from "./graph-editor/use-controller";
+import { SilenceCutDialog } from "@/silence/components/silence-cut-dialog";
 
 export function TimelineToolbar({
 	zoomLevel,
@@ -92,6 +95,7 @@ function ToolbarLeftSection() {
 	);
 	const { selectedElements } = useElementSelection();
 	const graphEditor = useGraphEditorController();
+	const [isSilenceCutOpen, setIsSilenceCutOpen] = useState(false);
 	const isCurrentlyBookmarked = useEditor((e) =>
 		e.scenes.isBookmarked({ time: e.playback.getCurrentTime() }),
 	);
@@ -196,6 +200,19 @@ function ToolbarLeftSection() {
 					onClick={({ event }) =>
 						handleAction({ action: "delete-selected", event })
 					}
+				/>
+
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={AudioWave01Icon} />}
+					tooltip="Smart Silence Cut"
+					onClick={({ event }) => {
+						event.stopPropagation();
+						setIsSilenceCutOpen(true);
+					}}
+				/>
+				<SilenceCutDialog
+					open={isSilenceCutOpen}
+					onOpenChange={setIsSilenceCutOpen}
 				/>
 
 				<div className="bg-border mx-1 h-6 w-px" />
