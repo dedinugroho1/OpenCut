@@ -26,3 +26,14 @@ target/
 .cargo-tools/
 
 rust-migration-notes.md
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Claude Code (machine-local settings & worktrees)
+.claude/settings.local.json
+.claude/worktrees/
