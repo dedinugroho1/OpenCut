@@ -19,6 +19,9 @@ export function createElementSelectionResult(
 }
 
 export abstract class Command {
+	/** Set when the command closes its own gaps, so global ripple doesn't shift twice. */
+	readonly managesRipple: boolean = false;
+
 	abstract execute(): CommandResult | undefined;
 
 	undo(): void {

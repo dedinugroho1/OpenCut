@@ -19,9 +19,7 @@ export class CommandManager {
 	constructor(private editor: EditorCore) {}
 
 	execute({ command }: { command: Command }): Command {
-		const beforeTracks = this.isRippleEnabled
-			? (this.editor.scenes.getActiveSceneOrNull()?.tracks ?? null)
-			: null;
+		const beforeTracks = this.getRippleBaseline({ command });
 		const previousSelection = this.getSelectionSnapshot();
 		const result = command.execute();
 		this.applyRippleIfEnabled({ beforeTracks });
@@ -74,9 +72,7 @@ export class CommandManager {
 			return;
 		}
 
-		const beforeTracks = this.isRippleEnabled
-			? (this.editor.scenes.getActiveSceneOrNull()?.tracks ?? null)
-			: null;
+		const beforeTracks = this.getRippleBaseline({ command: entry.command });
 		const previousSelection = this.getSelectionSnapshot();
 		const result = entry.command.redo();
 		this.applyRippleIfEnabled({ beforeTracks });
@@ -101,6 +97,17 @@ export class CommandManager {
 	clear(): void {
 		this.history = [];
 		this.redoStack = [];
+	}
+
+	private getRippleBaseline({
+		command,
+	}: {
+		command: Command;
+	}): SceneTracks | null {
+		if (!this.isRippleEnabled || command.managesRipple) {
+			return null;
+		}
+		return this.editor.scenes.getActiveSceneOrNull()?.tracks ?? null;
 	}
 
 	private getSelectionSnapshot(): EditorSelectionSnapshot {
